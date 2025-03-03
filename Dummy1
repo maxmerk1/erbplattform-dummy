@@ -1,0 +1,102 @@
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+
+const DummyErbplattform = () => {
+  const [user, setUser] = useState(null);
+  const [documents, setDocuments] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [log, setLog] = useState([]);
+
+  const users = ["Erblasser", "Bankberater", "Notar"];
+
+  const handleLogin = (role) => {
+    setUser(role);
+    setLog([...log, `🔑 ${role} hat sich angemeldet.`]);
+  };
+
+  const handleUpload = () => {
+    const newDoc = `Testament_${documents.length + 1}.pdf`;
+    setDocuments([...documents, newDoc]);
+    setLog([...log, `📤 Dokument '${newDoc}' wurde hochgeladen.`]);
+  };
+
+  const handleRequest = () => {
+    setRequests([...requests, "Notaranfrage für Dokumente"]);
+    setLog([...log, `📩 Notar hat eine Anfrage gestellt.`]);
+  };
+
+  const handleApprove = () => {
+    setRequests([]);
+    setLog([...log, `✅ Dokumente wurden freigegeben.`]);
+  };
+
+  return (
+    <div className="p-6 space-y-4">
+      {!user ? (
+        <div className="space-y-2">
+          <h2 className="text-lg font-semibold">🔑 Login</h2>
+          {users.map((role) => (
+            <Button key={role} onClick={() => handleLogin(role)}>
+              Login als {role}
+            </Button>
+          ))}
+        </div>
+      ) : (
+        <div>
+          <h2 className="text-xl font-bold">Willkommen, {user}</h2>
+          <div className="grid grid-cols-3 gap-4 mt-4">
+            <Card>
+              <CardContent className="p-4">
+                <h3 className="font-semibold">📄 Dokumente</h3>
+                <ul>
+                  {documents.map((doc, index) => (
+                    <li key={index}>{doc}</li>
+                  ))}
+                </ul>
+                {user === "Erblasser" && (
+                  <Button className="mt-2" onClick={handleUpload}>
+                    Dokument hochladen
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <h3 className="font-semibold">📩 Anfragen</h3>
+                <ul>
+                  {requests.map((req, index) => (
+                    <li key={index}>{req}</li>
+                  ))}
+                </ul>
+                {user === "Notar" && (
+                  <Button className="mt-2" onClick={handleRequest}>
+                    Dokumente anfordern
+                  </Button>
+                )}
+                {user === "Erblasser" && requests.length > 0 && (
+                  <Button className="mt-2" onClick={handleApprove}>
+                    Dokumente freigeben
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <h3 className="font-semibold">📜 Audit-Log</h3>
+                <ul>
+                  {log.map((entry, index) => (
+                    <li key={index}>{entry}</li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default DummyErbplattform;
